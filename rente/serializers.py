@@ -3,7 +3,8 @@ from .models import User, Listing, Booking, Review, ViewHistory, SearchHistory
 from django.contrib.auth.password_validation import validate_password
 
 
-# 🔐 Сериализатор для регистрации пользователя
+# Сериализатор для регистрации пользователя
+
 class RegisterSerializer(serializers.ModelSerializer):
     password = serializers.CharField(write_only=True, validators=[validate_password])
     password2 = serializers.CharField(write_only=True)
@@ -23,14 +24,16 @@ class RegisterSerializer(serializers.ModelSerializer):
         return user
 
 
-# 👤 Сериализатор для профиля пользователя (вывод информации)
+# Сериализатор для профиля пользователя (вывод информации)
+
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ("id", "username", "email", "role")
 
 
-# 🏘️ Объявления
+# Объявления
+
 class ListingSerializer(serializers.ModelSerializer):
     owner = UserSerializer(read_only=True)
     reviews_count = serializers.SerializerMethodField()
@@ -59,7 +62,8 @@ class ListingSerializer(serializers.ModelSerializer):
         return None
 
 
-# 📆 Бронирование
+# Бронирование
+
 class BookingSerializer(serializers.ModelSerializer):
     tenant = UserSerializer(read_only=True)
     listing = serializers.PrimaryKeyRelatedField(queryset=Listing.objects.all())
@@ -70,7 +74,8 @@ class BookingSerializer(serializers.ModelSerializer):
         read_only_fields = ("status", "created_at")
 
 
-# ⭐ Отзывы
+# Отзывы
+
 class ReviewSerializer(serializers.ModelSerializer):
     author = UserSerializer(read_only=True)
 
@@ -80,14 +85,16 @@ class ReviewSerializer(serializers.ModelSerializer):
         read_only_fields = ("created_at","listing")
 
 
-# 👁️ История просмотров
+# История просмотров
+
 class ViewHistorySerializer(serializers.ModelSerializer):
     class Meta:
         model = ViewHistory
         fields = "__all__"
 
 
-# 🔍 История поиска
+# История поиска
+
 class SearchHistorySerializer(serializers.ModelSerializer):
     class Meta:
         model = SearchHistory

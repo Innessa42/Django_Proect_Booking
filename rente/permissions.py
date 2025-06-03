@@ -31,7 +31,7 @@ class IsAdmin(permissions.BasePermission):
 
 class IsLandlord(permissions.BasePermission):
     """
-    Разрешает доступ только арендодателям
+    Разрешает доступ только арендодателям(роль landlord)
     """
 
     def has_permission(self, request, view):
@@ -40,7 +40,7 @@ class IsLandlord(permissions.BasePermission):
 
 class IsTenant(permissions.BasePermission):
     """
-    Разрешает доступ только арендаторам
+    Разрешает доступ только арендаторам(роль tenant)
     """
 
     def has_permission(self, request, view):

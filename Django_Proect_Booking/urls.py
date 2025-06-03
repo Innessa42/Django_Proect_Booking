@@ -34,7 +34,7 @@ from rest_framework_simplejwt.views import (
     TokenVerifyView,
 )
 
-# 🔗 Главный роутер
+# Главный роутер
 router = DefaultRouter()
 router.register(r'auth/register', RegisterViewSet, basename='register')
 router.register(r'users', UserViewSet)
@@ -43,7 +43,7 @@ router.register(r'bookings', BookingViewSet, basename='booking')
 router.register(r'views', ViewHistoryViewSet, basename='views')
 router.register(r'searches', SearchHistoryViewSet, basename='searches')
 
-# 🔗 Вложенные маршруты для отзывов: /listings/<listing_pk>/reviews/
+#  Вложенные маршруты для отзывов: /listings/<listing_pk>/reviews/
 listing_router = NestedSimpleRouter(router, r'listings', lookup='listing')
 listing_router.register(r'reviews', ReviewViewSet, basename='listing-reviews')
 

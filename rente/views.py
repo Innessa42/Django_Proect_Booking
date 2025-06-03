@@ -22,7 +22,8 @@ from .serializers import (
     ReviewSerializer, ViewHistorySerializer, SearchHistorySerializer
 )
 
-# 🔐 Регистрация
+# Регистрация
+
 class RegisterViewSet(viewsets.ViewSet):
     permission_classes = [AllowAny]
     def create(self, request):
@@ -104,14 +105,14 @@ class LogOutAPIView(APIView):
         return response
 
 
-# 👤 Профили пользователей (для примера/админов)
+# Профили пользователей (для примера/админов)
 class UserViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = User.objects.all()
     serializer_class = UserSerializer
     permission_classes = [permissions.IsAdminUser]
 
 
-# 🏘️ Объявления
+# Объявления
 class ListingViewSet(viewsets.ModelViewSet):
     queryset = Listing.objects.all()
     serializer_class = ListingSerializer
@@ -123,20 +124,13 @@ class ListingViewSet(viewsets.ModelViewSet):
         return [IsLandlord()]
 
     def perform_create(self, serializer):
-   # title = serializer.data['title']
-   # location = serializer.data['location']
-
-   # listing = Listing.objects.filter(title=title, location=location)
-
-   # if listing.exists():
-   #     raise PermissionDenied("Tacoi obiect uje sushestvuet")
 
         serializer.save(owner=self.request.user)
 
     def get_queryset(self):
         queryset = Listing.objects.filter(is_active=True)
 
-        # 🔍 Поиск по ключевым словам
+        # Поиск по ключевым словам
         q = self.request.query_params.get("q")
         if q:
             queryset = queryset.filter(
@@ -145,7 +139,7 @@ class ListingViewSet(viewsets.ModelViewSet):
             if self.request.user.is_authenticated:
                 SearchHistory.objects.create(user=self.request.user, query=q)
 
-        # 🧮 Фильтрация
+        # Фильтрация
         min_price = self.request.query_params.get("min_price")
         max_price = self.request.query_params.get("max_price")
         location = self.request.query_params.get("location")
@@ -163,7 +157,7 @@ class ListingViewSet(viewsets.ModelViewSet):
         if property_type:
             queryset = queryset.filter(property_type=property_type)
 
-        # 🔀 Сортировка
+        # Сортировка
         ordering = self.request.query_params.get("ordering")
         if ordering == "price_asc":
             queryset = queryset.order_by("price")
@@ -183,7 +177,7 @@ class ListingViewSet(viewsets.ModelViewSet):
         return Response({"status": "view recorded"})
 
 
-# 📆 Бронирования
+# Бронирования
 class BookingViewSet(viewsets.ModelViewSet):
     serializer_class = BookingSerializer
     permission_classes = [permissions.IsAuthenticated]
@@ -223,7 +217,7 @@ class BookingViewSet(viewsets.ModelViewSet):
 
 
 
-# ⭐ Отзывы
+# Отзывы
 class ReviewViewSet(viewsets.ModelViewSet):
     serializer_class = ReviewSerializer
     permission_classes = [permissions.IsAuthenticatedOrReadOnly]
@@ -235,7 +229,7 @@ class ReviewViewSet(viewsets.ModelViewSet):
         serializer.save(author=self.request.user, listing_id=self.kwargs["listing_pk"])
 
 
-# 👁️ История просмотров
+# История просмотров
 class ViewHistoryViewSet(viewsets.ReadOnlyModelViewSet):
     serializer_class = ViewHistorySerializer
     permission_classes = [permissions.IsAuthenticated]
@@ -244,7 +238,7 @@ class ViewHistoryViewSet(viewsets.ReadOnlyModelViewSet):
         return ViewHistory.objects.filter(user=self.request.user)
 
 
-# 🔍 История поиска
+# История поиска
 class SearchHistoryViewSet(viewsets.ReadOnlyModelViewSet):
     serializer_class = SearchHistorySerializer
     permission_classes = [permissions.IsAuthenticated]
