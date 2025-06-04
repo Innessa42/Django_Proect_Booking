@@ -51,6 +51,8 @@ listing_router.register(r'reviews', ReviewViewSet, basename='listing-reviews')
 urlpatterns = [
     path('api/', include(router.urls)),
     path('api/', include(listing_router.urls)),
+
+
 ]
 
 urlpatterns += [

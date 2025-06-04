@@ -4,7 +4,7 @@ from datetime import timedelta
 
 from django.contrib.auth import authenticate
 from django.utils.timezone import now
-from rest_framework import viewsets, permissions, status
+from rest_framework import viewsets, permissions, status, filters
 from rest_framework.exceptions import PermissionDenied
 from rest_framework.permissions import AllowAny
 from rest_framework.request import Request
@@ -118,6 +118,8 @@ class ListingViewSet(viewsets.ModelViewSet):
     serializer_class = ListingSerializer
     permission_classes = [permissions.IsAuthenticatedOrReadOnly]
 
+
+
     def get_permissions(self):
         if self.request.method in permissions.SAFE_METHODS:
             return [permissions.IsAuthenticated()]
@@ -189,7 +191,16 @@ class BookingViewSet(viewsets.ModelViewSet):
 
 
     def perform_create(self, serializer):
+
+        listing = serializer.validated_data.get("listing")
+        start_date = serializer.validated_data.get("start_date")
+        end_date = serializer.validated_data.get("end_date")
+
+        booking = Booking.objects.filter(listing=listing, start_date__lte=end_date, end_date__gte=start_date)
+        if booking.exists():
+            raise PermissionDenied("Жильё на текущую дату уже забронировано.")
         serializer.save(tenant=self.request.user)
+
 
     @action(detail=True, methods=["post"])
     def confirm(self, request, pk=None):
